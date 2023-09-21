@@ -1,0 +1,130 @@
+﻿@model DynamicTimeTableGenerate.Models.SubjectAndHours
+@{
+    ViewBag.Title = "Index";
+
+    var varTotalSubjects = ViewBag.TotalSubjects;
+    var varTotalHoursForWeek = ViewBag.TotalHoursForWeek;
+
+}
+<style type="text/css">
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        border: 2px solid #000;
+    }
+
+    th, td {
+        border: 1px solid #000;
+        text-align: center;
+        padding: 10px;
+    }
+</style>
+
+
+<form method="post" action="Index" id="frmTimetable">
+    @if (ViewBag.TotalSubjects > 0)
+    {
+        <table>
+            <thead>
+                <tr>
+                    <th>Subject Name</th>
+                    <th>Total Hours</th>
+                </tr>
+            </thead>
+            <tbody id="subjectFields">
+                @for (var i = 0; i < ViewBag.TotalSubjects; i++)
+                {
+                    <tr>
+                        <td>
+                            @Html.TextBoxFor(m => Model.SubjectName, new { @class = "form-control", placeholder = "Subject Name", required = "required", id = "txtSubjectName_" + i })
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(m => Model.SubjectTotalHours, new { @class = "form-control", placeholder = "Total Hours", onblur = "matchTotalHourse()", @type = "number", required = "required", id = "txtSubjectTotalHours_" + i })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    <br />
+    <input type="hidden" id="hdnTotalSubjects" name="hdnTotalSubjects" value="@varTotalSubjects">
+    <input type="hidden" id="hdnTotalHoursCount" name="hdnTotalHoursCount" value="@varTotalHoursForWeek" />
+</form>
+
+<div id="tableContainer">
+    <input type="submit" name="submit" value="Generate" id="tblGenerateDynamicTimeTable" style="display:none" />
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#tblGenerateDynamicTimeTable").click(function () {
+
+                // Number of rows and columns
+                var numRows = @TempData["WorkingDays"];
+                var numCols = @TempData["SubjectsPerDay"];
+                var hdnTotalHoursCount = $("#hdnTotalHoursCount").val();
+                var strArrSubjectNames = [];
+
+                for (var p = 0; p < parseInt(hdnTotalHoursCount); p++) {
+                    var varSubjectName = $("#txtSubjectName_" + p).val();
+                    var varSubjectTotalHours = $("#txtSubjectTotalHours_" + p).val();
+                    for (var q = 0; q < parseInt(varSubjectTotalHours); q++) {
+                        strArrSubjectNames.push(varSubjectName);
+                    }
+                }
+
+                var table = $("<table></table>");
+                var tbody = $("<tbody></tbody>");
+                var cellCounter = 0;
+
+                for (var y = 0; y < numRows; y++) {
+                    var row = $("<tr></tr>");
+                    for (var z = 0; z < numCols; z++) {
+                        if (cellCounter < strArrSubjectNames.length) {
+                            row.append($("<td>" + strArrSubjectNames[cellCounter] + "</td>"));
+                            cellCounter++;
+                        } else {
+                            row.append($("<td></td>"));
+                        }
+                    }
+                    tbody.append(row);
+                }
+                table.append(tbody);
+
+                $("#frmTimetable").hide();
+                $("#tableContainer").html("");
+                $("#tableContainer").append(table);
+
+            });
+
+    });
+
+</script>
+<script type="text/javascript">
+    function matchTotalHourse() {
+        var varTotalHoursCount = 0, varTempTotalHoursCount = 0;
+        varTempTotalHoursCount = $("#hdnTotalHoursCount").val();
+
+        for (var m = 0; m < parseInt(varTempTotalHoursCount); m++) {
+            var varSubjectTotalHours = $("#txtSubjectTotalHours_" + m).val();
+            if (varSubjectTotalHours != undefined && varSubjectTotalHours != null && varSubjectTotalHours != "") {
+                varTotalHoursCount += parseInt(varSubjectTotalHours);
+            }
+
+        }
+
+        if (varTotalHoursCount != "" && varTempTotalHoursCount != undefined && varTempTotalHoursCount == varTotalHoursCount) {
+
+            $("#tblGenerateDynamicTimeTable").show();
+        }
+        else {
+            $("#tblGenerateDynamicTimeTable").hide();
+        }
+    }
+
+</script>
+
+
+

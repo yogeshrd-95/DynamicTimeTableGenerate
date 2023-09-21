@@ -1,0 +1,39 @@
+﻿@model  DynamicTimeTableGenerate.Models.WorkingDays
+
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    @using (Html.BeginForm("Index", "TimeTable", FormMethod.Post))
+                    {
+                        <div class="form-group" style="padding:10px 0px 10px 0px">
+                            <label>No. Of Working Days: </label><span style="color:red">*</span>
+                            @Html.TextBoxFor(m => m.NoOfWorkingDays, new { @class = "form-control", @type = "number", @min = "1", @max = "7", required = "required", id = "txtNoOfWorkingDays" })
+                        </div>
+                        <div class="form-group" style="padding:10px 0px 10px 0px">
+                            <label>No. Of Subjects Per Day: </label><span style="color:red">*</span>
+                            @Html.TextBoxFor(m => m.NoOfSubjectsPerDay, new { @class = "form-control", @type = "number", @min = "0", @max = "8", required = "required", id = "txtNoOfSubjectPerDay" })
+                        </div>
+                        <div class="form-group" style="padding:10px 0px 10px 0px">
+                            <label>Total Subject: </label><span style="color:red">*</span>
+                            @Html.TextBoxFor(m => m.TotalSubjects, new { @class = "form-control", @type = "number", @min = "0", style = "max-width: 50px;", required = "required", id = "txtTotalSubject" })
+
+                        </div>
+
+                        <div class="form-group">
+                            <input type="submit" name="submit" value="Submit" class="btn btn-success" />
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
